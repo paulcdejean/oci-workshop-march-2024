@@ -43,6 +43,12 @@ jobs:
     needs: build-container
     steps:
       - uses: actions/checkout@v4
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
       - name: npm run build
         uses: docker://ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
         with:
