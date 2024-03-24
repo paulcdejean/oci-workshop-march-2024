@@ -28,7 +28,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: oci-workshop-march-2024
-        tags: ${{ github.sha }}
+        tags: branch-${{ github.branch }} ${{ github.sha }}
         containerfiles: example.containerfile
 
     - name: Push To GHCR
