@@ -8,8 +8,11 @@ env:
 
 jobs:
   build:
-    name: Build image
+    name: Build and push image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
     - uses: actions/checkout@v4
 
