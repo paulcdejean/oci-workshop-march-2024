@@ -3,5 +3,6 @@ RUN dnf5 install -y nodejs \
   	&& dnf5 clean all \
   	&& rm -rf /var/cache/yum
 WORKDIR /ociworkshop
+COPY package.json /ociworkshop/package.json
 COPY package-lock.json /ociworkshop/package-lock.json
 RUN npm install
