@@ -40,9 +40,11 @@ jobs:
           --disable-content-trust
   build-app:
     runs-on: ubuntu-latest
-    container: ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
     needs: build-container
     steps:
       - uses: actions/checkout@v4
       - name: npm run build
-        run: npm run build
+        uses: docker://ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
+        with:
+          args: run build
+          entrypoint: npm
