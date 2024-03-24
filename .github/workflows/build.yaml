@@ -44,11 +44,12 @@ jobs:
           --disable-content-trust
     - name: npm run build
       run: docker run -v ${{ github.workspace }}:/ociworkshop/workspace -w /ociworkshop/workspace "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" bash -c "mv /ociworkshop/node_modules/ /ociworkshop/workspace/ && npm run build"
-    - name: configure pages
+    - name: Setup Pages
       uses: actions/configure-pages@v4
-    - name: upload pages artifacts
+    - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: dist
-    - name: deploy pages
-      uses: actions/deploy-pages@v3
+        path: 'dist'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
