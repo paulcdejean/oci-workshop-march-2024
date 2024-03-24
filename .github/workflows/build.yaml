@@ -15,6 +15,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pages: write
+      id-token: write
     steps:
     - uses: actions/checkout@v4
     - name: Log in to ghcr.io
@@ -41,4 +43,12 @@ jobs:
         extra-args: |
           --disable-content-trust
     - name: npm run build
-      run: docker run -v ${{ github.workspace }}:/ociworkshop/workspace -w /ociworkshop/workspace "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" bash -c "mv /ociworkshop/node_modules/ /ociworkshop/workspace/ && ls -la node_modules/.bin && npm run build"
+      run: docker run -v ${{ github.workspace }}:/ociworkshop/workspace -w /ociworkshop/workspace "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" bash -c "mv /ociworkshop/node_modules/ /ociworkshop/workspace/ && npm run build"
+    - name: configure pages
+      uses: actions/configure-pages@v4
+    - name: upload pages artifacts
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist
+    - id: deploy pages
+      uses: actions/deploy-pages@v3
