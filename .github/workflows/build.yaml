@@ -5,9 +5,11 @@ env:
   REGISTRY_USER: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ github.token }}
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_NAME: oci-workshop-march-2024
+  IMAGE_TAG: branch-${{ github.ref_name }}
 
 jobs:
-  build-container:
+  build:
     name: Build and push container image
     runs-on: ubuntu-latest
     permissions:
@@ -26,7 +28,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: oci-workshop-march-2024
-        tags: branch-${{ github.ref_name }} ${{ github.sha }}
+        tags: ${{ env.IMAGE_NAME }} ${{ github.sha }}
         containerfiles: example.containerfile
     - name: Push To GHCR
       uses: redhat-actions/push-to-registry@v2
@@ -38,19 +40,5 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
         extra-args: |
           --disable-content-trust
-  build-app:
-    runs-on: ubuntu-latest
-    needs: build-container
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to ghcr.io
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-      - name: npm run build
-        uses: docker://ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
-        with:
-          args: run build
-          entrypoint: npm
+    - name: npm run build
+      run: docker run "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" npm version
