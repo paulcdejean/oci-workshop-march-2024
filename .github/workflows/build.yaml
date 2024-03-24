@@ -7,22 +7,20 @@ env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
-  build:
-    name: Build and push image
+  build-container:
+    name: Build and push container image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
     - uses: actions/checkout@v4
-
     - name: Log in to ghcr.io
       uses: redhat-actions/podman-login@v1
       with:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
         registry: ${{ env.IMAGE_REGISTRY }}
-
     - name: Buildah Action
       id: build_image
       uses: redhat-actions/buildah-build@v2
@@ -30,7 +28,6 @@ jobs:
         image: oci-workshop-march-2024
         tags: branch-${{ github.ref_name }} ${{ github.sha }}
         containerfiles: example.containerfile
-
     - name: Push To GHCR
       uses: redhat-actions/push-to-registry@v2
       with:
@@ -41,3 +38,12 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
         extra-args: |
           --disable-content-trust
+  container-test-job:
+    runs-on: ubuntu-latest
+    container: ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
+    needs: build-container
+    steps:
+      - uses: actions/checkout@v4
+      - name: npm run build
+        run: |
+          npm run build
