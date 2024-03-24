@@ -38,7 +38,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
         extra-args: |
           --disable-content-trust
-  container-test-job:
+  build-app:
     runs-on: ubuntu-latest
     container: ghcr.io/paulcdejean/oci-workshop-march-2024:branch-main
     needs: build-container
